@@ -51,7 +51,7 @@ end
 def show_students
   return puts "There are no students saved to the list yet." if @students.count == 0
   print_students_list
-  print_footer
+  print_students_footer
 end
 
 def process(selection)
@@ -109,7 +109,7 @@ end
 
 def print_students_list
   if @students.count > 0
-    print_header
+    print_students_header
     hash_co = @students.group_by { |entry| entry[@cohort] }
     hash_co.each do |key, value|
       puts "#{key.capitalize} cohort"

@@ -19,6 +19,7 @@ describe StudentInput do
     @student_input = StudentInput.new(@student_class_double)
 
     allow(STDIN).to receive(:gets).and_return(first_name, surname, birthplace, cohort)
+    allow(STDOUT).to receive(:puts)
   end
 
   it 'should get a new student from the user and create new student instance' do

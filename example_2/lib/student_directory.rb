@@ -5,7 +5,7 @@ require_relative './student.rb'
 
 $students = [] # an empty array accessible to all methods (global variable)
 
-$student_input = StudentInput.new(Student)9
+$student_input = StudentInput.new(Student)
 
 $list_input = ListInput.new($student_input, 'student')
 

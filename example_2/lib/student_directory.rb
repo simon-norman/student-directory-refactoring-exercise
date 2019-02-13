@@ -1,6 +1,6 @@
 require 'csv'
 
-@students = [] # an empty array accessible to all methods (global variable)
+$students = [] # an empty array accessible to all methods (global variable)
 
 # INTERACTIVE MENU --------------------------------------------------------------
 
@@ -26,7 +26,7 @@ def process(selection)
         data_entry_loop
         feedback_message("data entered")
     when "2"
-        if !@students.empty?
+        if !$students.empty?
             show_students
             feedback_message("data printed")
         else
@@ -73,7 +73,7 @@ def save_students
 
     # open the file for writing
     CSV.open(filename, "wb") { |csv|
-        @students.each do |student|
+        $students.each do |student|
             student_data = [student[:firstname], student[:surname], student[:birthplace], student[:cohort]]
             csv << student_data
         end
@@ -101,7 +101,7 @@ def initial_load_students
         puts "No file was given on startup so loaded \"students.csv\" by default."
     elsif File.exists?(filename) # if it exists
         load_students(filename)
-        puts "Loaded #{@students.count} from #{filename}"
+        puts "Loaded #{$students.count} from #{filename}"
     else # if it doesn't exist
         puts "Sorry, #{filename} doesn't exist."
         exit # quit the programe
@@ -186,32 +186,32 @@ def push_to_array(args = {})
         cohort: :unknown
     }
     args = defaults.merge(args)
-    @students << args
+    $students << args
 end
 
 def data_entry_loop
     # create an empty array
-    details = prompt(@students)
+    details = prompt($students)
 
     # add student hash to the array
     if !details.empty?
         push_to_array(details)
-        puts @students.count == 1 ? "Now we have #{@students.count} student." : "Now we have #{@students.count} students."
+        puts $students.count == 1 ? "Now we have #{$students.count} student." : "Now we have #{$students.count} students."
         puts "Hit enter to exit or \"-\" to enter (a)nother student.\n"
         enter = STDIN.gets.gsub("\n", "")
 
         while !enter.empty?
             # continuing adding the student hashes to the array
-            details = prompt(@students)
+            details = prompt($students)
             push_to_array(details)
-            puts @students.count == 1 ? "Now we have #{@students.count} student." : "Now we have #{@students.count} students."
+            puts $students.count == 1 ? "Now we have #{$students.count} student." : "Now we have #{$students.count} students."
             puts "Hit enter to exit or \"-\" to enter (a)nother student.\n"
             enter = STDIN.gets.gsub("\n", "")
         end
     end
 
     # return the array of students
-    @students
+    $students
 end
 
 # PRINTING THE DATA -------------------------------------------------------------
@@ -228,18 +228,14 @@ def print_header
 end
 
 def print_students_list
-    @students.each_with_index do |student, index|
+    $students.each_with_index do |student, index|
         puts "#{index + 1}. #{student[:firstname]} (#{student[:cohort]} cohort)"
     end
 end
 
 def print_footer
-    puts "Overall, we have #{@students.count} great students.\n"
+    puts "Overall, we have #{$students.count} great students.\n"
 end
-
-initial_load_students
-
-interactive_menu
 
 # CUSTOM PRINTING METHODS -------------------------------------------------------
 
@@ -314,6 +310,8 @@ def print_bycohort(students)
         end
     end
 end
+
+interactive_menu
 
 # EXAMPLE CALLS FOR CUSTOM PRINTING METHODS -------------------------------------
 

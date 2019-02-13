@@ -28,7 +28,7 @@
     "name": "Debug Local",
     "type": "Ruby",
     "request": "launch",
-    "program": "${workspaceRoot}/lib/dice.rb"
+    "program": "${workspaceRoot}/lib/student_directory.rb"
   }
   ]
 }

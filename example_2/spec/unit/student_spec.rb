@@ -1,6 +1,15 @@
 require './lib/student.rb'
 
 describe Student do
+  it 'should create a student with default attributes if no params passed' do
+    student = Student.new
+
+    expect(student.first_name).to eq("--")
+    expect(student.surname).to eq("--")
+    expect(student.birthplace).to eq("--")
+    expect(student.cohort).to eq(:unknown)
+  end
+
   it 'should create a new student with a first name and cohort' do
     first_name = 'Simon'
     surname = 'Norman'

@@ -1,6 +1,10 @@
 require 'csv'
+require_relative './input_student.rb'
+require_relative './student.rb'
 
 $students = [] # an empty array accessible to all methods (global variable)
+
+$input_student = InputStudent.new(Student)
 
 # INTERACTIVE MENU --------------------------------------------------------------
 
@@ -74,7 +78,12 @@ def save_students
     # open the file for writing
     CSV.open(filename, "wb") { |csv|
         $students.each do |student|
-            student_data = [student[:firstname], student[:surname], student[:birthplace], student[:cohort]]
+            student_data = [
+              student.first_name,
+              student.surname,
+              student.birthplace,
+              student.cohort
+            ]
             csv << student_data
         end
     }
@@ -116,12 +125,12 @@ def prompt(output)
         enter = STDIN.gets.gsub("\n", "")
 
         if !enter.empty? # if user has not hit enter, repeat user data entry prompt sequence
-            details = user_data_entry
+            details = $input_student.input
         else
             details = Hash.new
         end
     else
-        details = user_data_entry
+        details = $input_student.input
     end
 
     return details
@@ -149,44 +158,8 @@ def spellcheck(input_month)
     return input_month
 end
 
-def user_data_entry
-    details = {
-        firstname: "--",
-        surname: "--",
-        birthplace: "--",
-        cohort: :unknown
-    }
-
-    puts "Please enter the first name, last name, birthplace and cohort of each student.\n"
-
-    puts "Enter first name:"
-    name = STDIN.gets.gsub("\n", "")
-    if !name.empty? then details[:firstname] = name end
-
-    puts "Enter surname:"
-    family = STDIN.gets.gsub("\n", "")
-    if !family.empty? then details[:surname] = family end
-
-    puts "Enter birthplace:"
-    place = STDIN.gets.gsub("\n", "")
-    if !place.empty? then details[:birthplace] = place end
-
-    puts "Enter cohort:"
-    month = STDIN.gets.gsub("\n", "")
-    if !month.empty? then details[:cohort] = spellcheck(month) end
-
-    return details
-end
-
-def push_to_array(args = {})
-    defaults = {
-        firstname: "--",
-        surname: "--",
-        birthplace: "--",
-        cohort: :unknown
-    }
-    args = defaults.merge(args)
-    $students << args
+def push_to_array(student = Student.new)
+    $students << student
 end
 
 def data_entry_loop
@@ -194,7 +167,7 @@ def data_entry_loop
     details = prompt($students)
 
     # add student hash to the array
-    if !details.empty?
+    if !details == nil
         push_to_array(details)
         puts $students.count == 1 ? "Now we have #{$students.count} student." : "Now we have #{$students.count} students."
         puts "Hit enter to exit or \"-\" to enter (a)nother student.\n"
@@ -229,7 +202,7 @@ end
 
 def print_students_list
     $students.each_with_index do |student, index|
-        puts "#{index + 1}. #{student[:firstname]} (#{student[:cohort]} cohort)"
+        puts "#{index + 1}. #{student.first_name} (#{student.cohort} cohort)"
     end
 end
 
@@ -241,15 +214,15 @@ end
 
 def print_all(students)
     students.each do |student|
-        puts "#{student[:firstname]} #{student[:surname]} | #{student[:birthplace]} | Cohort: #{student[:cohort]}"
+        puts "#{student.first_name} #{student.surname} | #{student.birthplace} | Cohort: #{student.cohort}"
     end
 end
 
 def print_beginwitha(students)
     puts "Register of students (with names beginning in \"A\"):"
     students.each do |student|
-        if student[:firstname][0] == "a" || student[:firstname][0] == "A"
-            puts "\t#{student[:firstname]} (#{student[:cohort]} cohort)"
+        if student.first_name[0] == "a" || student.first_name[0] == "A"
+            puts "\t#{student.first_name} (#{student.cohort} cohort)"
         else
             next
         end
@@ -259,8 +232,8 @@ end
 def print_lessthan12(students)
     puts "Register of students (with names less than 12 characters):"
     students.each do |student|
-        if student[:firstname].length < 12
-            puts "\t#{student[:firstname]} (#{student[:cohort]} cohort)"
+        if student.first_name.length < 12
+            puts "\t#{student.first_name} (#{student.cohort} cohort)"
         else
             next
         end
@@ -270,7 +243,7 @@ end
 def print_usingwhile(students)
     count = 0
     while count < students.length
-        puts "#{students[count][:firstname]} (#{students[count][:cohort]} cohort)"
+        puts "#{students[count].first_name} (#{students[count].cohort} cohort)"
         count += 1
     end
 end
@@ -278,8 +251,8 @@ end
 def print_centered(students)
     puts "Here is our nicely formatted graduation attendee poster:".center(70).upcase
     students.each do |student|
-        puts "#{student[:firstname]}".center(70, "-")
-        puts "(#{student[:cohort]} cohort)".center(70)
+        puts "#{student.first_name}".center(70, "-")
+        puts "(#{student.cohort} cohort)".center(70)
     end
 end
 
@@ -287,11 +260,11 @@ def existing_cohorts(students)
     cohorts = []
     students.each do |x|
         if cohorts.empty?
-            cohorts << x[:cohort]
-        elsif cohorts.include? x[:cohort]
+            cohorts << x.cohort
+        elsif cohorts.include? x.cohort
             next
         else
-            cohorts << x[:cohort]
+            cohorts << x.cohort
         end
     end
     return cohorts
@@ -302,8 +275,8 @@ def print_bycohort(students)
     cohort_list.each do |month|
         puts "\nHere are the students from the #{month} cohort:"
         students.each do |x|
-            if x[:cohort] == month
-                puts "#{x[:firstname]} #{x[:surname]}"
+            if x.cohort == month
+                puts "#{x.first_name} #{x.surname}"
             else
                 next
             end
@@ -311,6 +284,7 @@ def print_bycohort(students)
     end
 end
 
+initial_load_students
 interactive_menu
 
 # EXAMPLE CALLS FOR CUSTOM PRINTING METHODS -------------------------------------

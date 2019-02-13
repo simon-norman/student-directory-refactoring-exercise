@@ -91,7 +91,13 @@ end
 
 def load_file(filename)
     CSV.foreach(filename) { |row|
-        push_to_array(firstname: row[0], surname: row[1], birthplace: row[2], cohort: row[3].to_sym)
+        student = Student.new({
+          first_name: row[0], 
+          surname: row[1], 
+          birthplace: row[2], 
+          cohort: row[3].to_sym
+        })
+        push_to_array(student)
     }
 end
 

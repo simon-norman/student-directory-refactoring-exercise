@@ -1,6 +1,6 @@
-require './lib/input_student.rb'
+require './lib/student_input.rb'
 
-describe InputStudent do
+describe StudentInput do
   let (:first_name) { 'Simon' }
   let (:surname) { 'Norman' }
   let (:birthplace) { 'Maidstone' }
@@ -16,7 +16,7 @@ describe InputStudent do
   before(:each) do
     @student_double = double(:student)
     @student_class_double = double(:Student, new: @student_double)
-    @student_input = InputStudent.new(@student_class_double)
+    @student_input = StudentInput.new(@student_class_double)
 
     allow(STDIN).to receive(:gets).and_return(first_name, surname, birthplace, cohort)
   end

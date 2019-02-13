@@ -1,10 +1,13 @@
 require 'csv'
-require_relative './input_student.rb'
+require_relative './student_input.rb'
+require_relative './list_input'
 require_relative './student.rb'
 
 $students = [] # an empty array accessible to all methods (global variable)
 
-$input_student = InputStudent.new(Student)
+$student_input = StudentInput.new(Student)9
+
+$list_input = ListInput.new($student_input, 'student')
 
 # INTERACTIVE MENU --------------------------------------------------------------
 
@@ -27,7 +30,7 @@ end
 def process(selection)
     case selection
     when "1"
-        data_entry_loop
+        $students = $list_input.input
         feedback_message("data entered")
     when "2"
         if !$students.empty?
@@ -97,7 +100,7 @@ def load_file(filename)
           birthplace: row[2], 
           cohort: row[3].to_sym
         })
-        push_to_array(student)
+        $students << student
     }
 end
 
@@ -121,76 +124,6 @@ def initial_load_students
         puts "Sorry, #{filename} doesn't exist."
         exit # quit the programe
     end
-end
-
-# USER DATA ENTRY ---------------------------------------------------------------
-
-def prompt(output)
-    if output.length < 1
-        puts "Hit enter to exit or \"-\" to enter (a)nother student.\n"
-        enter = STDIN.gets.gsub("\n", "")
-
-        if !enter.empty? # if user has not hit enter, repeat user data entry prompt sequence
-            details = $input_student.input
-        else
-            details = Hash.new
-        end
-    else
-        details = $input_student.input
-    end
-
-    return details
-end
-
-def spellcheck(input_month)
-    test = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"]
-
-    test.each do |x|
-        if input_month[0..2].downcase == x[0..2].downcase then input_month = x.downcase.to_sym end
-    end
-
-    return input_month
-end
-
-def push_to_array(student = Student.new)
-    $students << student
-end
-
-def data_entry_loop
-    # create an empty array
-    details = prompt($students)
-
-    # add student hash to the array
-    if !details == nil
-        push_to_array(details)
-        puts $students.count == 1 ? "Now we have #{$students.count} student." : "Now we have #{$students.count} students."
-        puts "Hit enter to exit or \"-\" to enter (a)nother student.\n"
-        enter = STDIN.gets.gsub("\n", "")
-
-        while !enter.empty?
-            # continuing adding the student hashes to the array
-            details = prompt($students)
-            push_to_array(details)
-            puts $students.count == 1 ? "Now we have #{$students.count} student." : "Now we have #{$students.count} students."
-            puts "Hit enter to exit or \"-\" to enter (a)nother student.\n"
-            enter = STDIN.gets.gsub("\n", "")
-        end
-    end
-
-    # return the array of students
-    $students
 end
 
 # PRINTING THE DATA -------------------------------------------------------------

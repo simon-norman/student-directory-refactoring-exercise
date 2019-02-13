@@ -1,4 +1,4 @@
-class InputStudent
+class StudentInput
   def initialize(student)
     @student = student
   end

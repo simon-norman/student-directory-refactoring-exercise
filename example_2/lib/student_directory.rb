@@ -2,12 +2,15 @@ require 'csv'
 require_relative './student_input.rb'
 require_relative './list_input'
 require_relative './student.rb'
+require_relative './storage.rb'
 
 $students = [] # an empty array accessible to all methods (global variable)
 
 $student_input = StudentInput.new(Student)
 
 $list_input = ListInput.new($student_input, 'student')
+
+$storage = Storage.new(student_class: Student, csv: CSV)
 
 # INTERACTIVE MENU --------------------------------------------------------------
 
@@ -92,30 +95,19 @@ def save_students
     }
 end
 
-def load_file(filename)
-    CSV.foreach(filename) { |row|
-        student = Student.new({
-          first_name: row[0], 
-          surname: row[1], 
-          birthplace: row[2], 
-          cohort: row[3].to_sym
-        })
-        $students << student
-    }
-end
-
-def load_students(filename = "students.csv")
+def load_students
     # ask user for file
     puts "Please enter the filename (inc. extension) that you'd like to load:"
     filename = STDIN.gets.chomp
+    if filename == "" then filename = "students.csv" end
 
-    load_file(filename)
+    $students = $storage.load_students_file(filename)
 end
 
 def initial_load_students
     filename = ARGV.first # first argument from the command line
     if filename.nil?
-        load_file("students.csv")
+        $students = $storage.load_students_file("students.csv")
         puts "No file was given on startup so loaded \"students.csv\" by default."
     elsif File.exists?(filename) # if it exists
         load_students(filename)

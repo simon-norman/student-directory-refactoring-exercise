@@ -18,6 +18,6 @@ describe Storage do
 
     expected_list_students = [student_double, student_double]
 
-    expect(storage.load_students('students.csv')).to eq(expected_list_students)
+    expect(storage.load_students_file('students.csv')).to eq(expected_list_students)
   end
 end

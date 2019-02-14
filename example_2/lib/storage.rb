@@ -4,7 +4,7 @@ class Storage
     @csv = csv
   end
 
-  def load_students(filename)
+  def load_students_file(filename)
     students = []
     @csv.foreach(filename) do |csv_row|
       students << new_student_from(csv_row)

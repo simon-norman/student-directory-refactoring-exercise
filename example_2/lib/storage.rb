@@ -4,6 +4,14 @@ class Storage
     @csv = csv
   end
 
+  def load_students
+    puts "Please enter the filename (inc. extension) that you'd like to load:"
+    filename = STDIN.gets.chomp
+    filename = 'students.csv' if filename == ''
+
+    load_students_file(filename)
+  end
+
   def load_students_file(filename)
     students = []
     @csv.foreach(filename) do |csv_row|

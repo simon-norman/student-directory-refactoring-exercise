@@ -1,4 +1,4 @@
-require './lib/student_input.rb'
+require './lib/student_input/student_input.rb'
 
 describe StudentInput do
   let (:first_name) { 'Simon' }

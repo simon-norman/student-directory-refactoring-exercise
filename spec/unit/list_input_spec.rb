@@ -1,4 +1,4 @@
-require './lib/list_input.rb'
+require './lib/student_input/list_input.rb'
 
 describe ListInput do
   let (:record_input) { 'an inputted record' }

@@ -95,29 +95,6 @@ def save_students
     }
 end
 
-def load_students
-    # ask user for file
-    puts "Please enter the filename (inc. extension) that you'd like to load:"
-    filename = STDIN.gets.chomp
-    if filename == "" then filename = "students.csv" end
-
-    $students = $storage.load_students_file(filename)
-end
-
-def initial_load_students
-    filename = ARGV.first # first argument from the command line
-    if filename.nil?
-        $students = $storage.load_students_file("students.csv")
-        puts "No file was given on startup so loaded \"students.csv\" by default."
-    elsif File.exists?(filename) # if it exists
-        $students = $storage.load_students_file(filename)
-        puts "Loaded #{$students.count} from #{filename}"
-    else # if it doesn't exist
-        puts "Sorry, #{filename} doesn't exist."
-        exit # quit the programe
-    end
-end
-
 # PRINTING THE DATA -------------------------------------------------------------
 
 def show_students
@@ -215,7 +192,7 @@ def print_bycohort(students)
     end
 end
 
-initial_load_students
+$students = $storage.initial_load_students
 interactive_menu
 
 # EXAMPLE CALLS FOR CUSTOM PRINTING METHODS -------------------------------------

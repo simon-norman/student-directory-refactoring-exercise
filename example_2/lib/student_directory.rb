@@ -44,7 +44,7 @@ def process(selection)
         end
         # can also use an unless statement: print(students) unless students.empty?
     when "3"
-        save_students
+        $storage.save_students($students)
         feedback_message("data saved")
     when "4"
         $students = $storage.load_students
@@ -70,27 +70,6 @@ def source_code
         puts
         sc.readlines.each do |line|
             puts line
-        end
-    }
-end
-
-# WORKING WITH CSV --------------------------------------------------------------
-
-def save_students
-    # ask user for file
-    puts "Please enter the filename (inc. extension) in which you'd like to save the data:"
-    filename = STDIN.gets.chomp
-
-    # open the file for writing
-    CSV.open(filename, "wb") { |csv|
-        $students.each do |student|
-            student_data = [
-              student.first_name,
-              student.surname,
-              student.birthplace,
-              student.cohort
-            ]
-            csv << student_data
         end
     }
 end

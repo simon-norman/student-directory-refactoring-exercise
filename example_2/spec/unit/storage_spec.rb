@@ -1,13 +1,24 @@
 require './lib/storage.rb'
 
 describe Storage do
-  let (:student_double) { double(:student) }
-  let (:student_class_double) { double(:Student, new: student_double) }
-  let (:csv_double) { double(:CSV) }
   let (:first_name) { 'Simon' }
   let (:surname) { 'Norman' }
   let (:birthplace) { 'Maidstone' }
   let (:cohort) { 'December' }
+  let (:student_as_array) { [first_name, surname, birthplace, cohort] }
+
+  let (:student_double) do
+    double(
+      :student,
+      first_name: first_name,
+      surname: surname,
+      birthplace: birthplace,
+      cohort: cohort,
+      to_array: student_as_array
+    )
+  end
+  let (:student_class_double) { double(:Student, new: student_double) }
+  let (:csv_double) { double(:CSV) }
   let (:storage) { storage = Storage.new(student_class: student_class_double, csv: csv_double) }
 
   before(:each) do
@@ -18,7 +29,7 @@ describe Storage do
       .and_yield([first_name, surname, birthplace, cohort])
   end
 
-  describe 'when the application starts up' do
+  describe 'when loading a filepath from args passed in start up' do
     context 'given no filepath has been provided in the args' do
       it 'should instruct CSV loader to load default file' do
         allow(ARGV).to receive(:first).and_return(nil)
@@ -52,31 +63,61 @@ describe Storage do
     end
   end
 
-  describe 'when user enters a filepath to load students' do
-    before(:each) do
-      allow(STDIN).to receive(:gets).and_return('somefile.csv')
+  describe 'when loading a file by requesting filepath from user' do
+    describe 'and user enters a filepath to load students' do
+      before(:each) do
+        allow(STDIN).to receive(:gets).and_return('somefile.csv')
+      end
+
+      it 'should load CSV file and return as list of students' do
+        expected_list_students = [student_double, student_double]
+
+        expect(storage.load_students).to eq(expected_list_students)
+      end
+
+      it 'should pass the entered filepath to the CSV loader' do
+        storage.load_students
+
+        expect(csv_double).to have_received(:foreach).with('somefile.csv')
+      end
     end
 
-    it 'should load CSV file and return as list of students' do
-      expected_list_students = [student_double, student_double]
+    describe 'and user does NOT enter a filepath to load students' do
+      it 'should pass default filepath to CSV loader' do
+        allow(STDIN).to receive(:gets).and_return("\r\n")
 
-      expect(storage.load_students).to eq(expected_list_students)
-    end
+        storage.load_students
 
-    it 'should pass the entered filepath to the CSV loader' do
-      storage.load_students
-
-      expect(csv_double).to have_received(:foreach).with('somefile.csv')
+        expect(csv_double).to have_received(:foreach).with('students.csv')
+      end
     end
   end
 
-  describe 'when user does NOT enter a filepath to load students' do
-    it 'should pass default filepath to CSV loader' do
-      allow(STDIN).to receive(:gets).and_return("\r\n")
+  describe 'when saving a list of students' do
+    let (:csv_file) { [] }
+    before(:each) do
+      allow(csv_double).to receive(:open)
+        .and_yield(csv_file)
+    end
 
-      storage.load_students
+    it 'should pass user inputted filepath to CSV writer' do
+      inputted_filepath = './somefile.csv'
+      allow(STDIN).to receive(:gets).and_return(inputted_filepath)
 
-      expect(csv_double).to have_received(:foreach).with('students.csv')
+      storage.save_students([student_double, student_double])
+
+      expect(csv_double).to have_received(:open).with(inputted_filepath, 'wb')
+    end
+
+    it 'should pass students to CSV writer' do
+      inputted_filepath = './somefile.csv'
+      allow(STDIN).to receive(:gets).and_return(inputted_filepath)
+
+      storage.save_students([student_double, student_double])
+
+      expected_students_passed_to_csv = [student_as_array, student_as_array]
+
+      expect(csv_file).to eq(expected_students_passed_to_csv)
     end
   end
 end

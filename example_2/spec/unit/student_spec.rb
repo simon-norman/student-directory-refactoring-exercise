@@ -41,4 +41,15 @@ describe Student do
 
     expect(student.cohort).to eq(:Nov)
   end
+
+  it 'should return student as an array' do
+    student = Student.new(student_data)
+
+    expect(student.to_array).to eq([
+      first_name,
+      surname,
+      birthplace,
+      cohort[0..2].to_sym
+    ])
+  end
 end

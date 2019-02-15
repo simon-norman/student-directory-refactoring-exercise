@@ -56,4 +56,20 @@ class Storage
       cohort: csv_row[3].to_sym
     )
   end
+
+  def save_students(students)
+    filename = filename_from_user
+
+    @csv.open(filename, 'wb') do |csv|
+      students.each do |student|
+        csv << student.to_array
+      end
+    end
+  end
+
+  def filename_from_user
+    puts 'Please enter the filename (inc. extension)' \
+         'in which you would like to save the data:'
+    STDIN.gets.chomp
+  end
 end

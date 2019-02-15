@@ -1,6 +1,6 @@
 require 'csv'
-require_relative './student_input.rb'
-require_relative './list_input'
+require_relative './student_input/student_input.rb'
+require_relative './student_input/list_input'
 require_relative './student.rb'
 require_relative './storage.rb'
 

@@ -47,7 +47,7 @@ def process(selection)
         save_students
         feedback_message("data saved")
     when "4"
-        load_students
+        $students = $storage.load_students
         feedback_message("data loaded")
     when "5"
         source_code
@@ -110,7 +110,7 @@ def initial_load_students
         $students = $storage.load_students_file("students.csv")
         puts "No file was given on startup so loaded \"students.csv\" by default."
     elsif File.exists?(filename) # if it exists
-        load_students(filename)
+        $students = $storage.load_students_file(filename)
         puts "Loaded #{$students.count} from #{filename}"
     else # if it doesn't exist
         puts "Sorry, #{filename} doesn't exist."

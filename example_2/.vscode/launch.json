@@ -28,6 +28,7 @@
     "name": "Debug Local",
     "type": "Ruby",
     "request": "launch",
+    "args": ["students.csv"],
     "program": "${workspaceRoot}/lib/student_directory.rb"
   }
   ]
